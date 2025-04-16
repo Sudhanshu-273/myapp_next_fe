@@ -1,4 +1,4 @@
-// "use client"
+"use client"
 
 import {
   Box,
@@ -9,9 +9,36 @@ import {
   Button,
   Link as MuiLink,
 } from '@mui/material';
+import axios from 'axios';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 
 export default function RegisterPage() {
+
+  const [loginData, setLoginData] = useState({
+    email: "",
+    password: "",
+    confirmPassword: ""
+  });
+
+  const submitRegister = async () => {
+    const res = await axios.post("/api/auth/register", {
+      email: loginData.email,
+      password: loginData.password,
+      confirmPassword: loginData.confirmPassword
+    });
+    console.log(res);
+  }
+
+  useEffect(() => {
+    console.log(loginData);
+    // submitRegister();
+  }, [loginData])
+
+  useEffect(() => {
+
+  }, [])
+
   return (
     <>
       <Box
@@ -35,11 +62,26 @@ export default function RegisterPage() {
               Create an Account
             </Typography>
 
-            <TextField label="Email" type="email" fullWidth />
-            <TextField label="Password" type="password" fullWidth />
-            <TextField label="Confirm Password" type="password" fullWidth />
+            <TextField onChange={(e) => {
+              setLoginData({
+                ...loginData,
+                email: e.target.value
+              })
+            }} label="Email" type="email" fullWidth />
+            <TextField onChange={(e) => {
+              setLoginData({
+                ...loginData,
+                password: e.target.value
+              })
+            }} label="Password" type="password" fullWidth />
+            <TextField onChange={(e) => {
+              setLoginData({
+                ...loginData,
+                confirmPassword: e.target.value
+              })
+            }} label="Confirm Password" type="password" fullWidth />
 
-            <Button variant="contained" fullWidth size="large">
+            <Button onClick={submitRegister} variant="contained" fullWidth size="large">
               Register
             </Button>
 

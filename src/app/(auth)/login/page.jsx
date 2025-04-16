@@ -9,9 +9,44 @@ import {
   Button,
   Link as MuiLink,
 } from '@mui/material';
+import axios from 'axios';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 
 export default function LoginPage() {
+
+  const API_URL = process.env.NEXT_PUBLIC_BASE_URL
+  // console.log(API_URL);
+
+  const [loginData, setLoginData] = useState({
+    email: "",
+    password: "",
+  });
+
+  const submitLogin = async () => {
+    console.log(loginData);
+    const res = await axios.post("/api/auth/login", {
+      email: loginData.email,
+      password: loginData.password
+    });
+    console.log(res);
+  }
+
+  useEffect(() => {
+    console.log(loginData);
+    // submitRegister();
+  }, [loginData])
+
+  useEffect(() => {
+
+  }, [])
+
+  // const submitLogin = async () => {
+  //   const res = await axios.get("/api/logi");
+  //   console.log(res);
+  // }
+
+
   return (
     <Box
       minHeight="100vh"
@@ -34,10 +69,20 @@ export default function LoginPage() {
             Welcome Back
           </Typography>
 
-          <TextField label="Email" type="email" fullWidth />
-          <TextField label="Password" type="password" fullWidth />
+          <TextField onChange={(e) => {
+            setLoginData({
+              ...loginData,
+              email: e.target.value
+            })
+          }} label="Email" type="email" fullWidth />
+          <TextField onChange={(e) => {
+            setLoginData({
+              ...loginData,
+              password: e.target.value
+            })
+          }} label="Password" type="password" fullWidth />
 
-          <Button variant="contained" fullWidth size="large">
+          <Button onClick={submitLogin} variant="contained" fullWidth size="large">
             Login
           </Button>
 
