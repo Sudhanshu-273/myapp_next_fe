@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 
 
-const API_URL = "https://symmetrical-space-parakeet-7xr6xpvgjqw3r7xx-8080.app.github.dev"
+const API_URL = process.env.BASE_URL
 
 const nextConfig = {
     async rewrites() {
