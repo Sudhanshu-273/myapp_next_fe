@@ -1,7 +1,7 @@
 "use client";
 
-// pages/sales.js
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 import {
   Container,
   Typography,
@@ -13,38 +13,82 @@ import {
   Button,
   TextField,
   IconButton,
+  CircularProgress,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 
-const customers = [
-  "John Doe(Trainer)",
-  "Jane Smith(Member)",
-  "Alice Johnson(Member)",
-];
-const items = [
-  { name: "Laptop", price: 1000 },
-  { name: "Phone", price: 500 },
-  { name: "Tablet", price: 300 },
-];
-
 export default function SalesPage() {
-  const [customer, setCustomer] = useState("");
-  const [item, setItem] = useState("");
+  const [customers, setCustomers] = useState([]);
+  const [items, setItems] = useState([]);
+  const [loadingCustomers, setLoadingCustomers] = useState(true);
+  const [loadingItems, setLoadingItems] = useState(true);
+  const [selectedCustomerId, setSelectedCustomerId] = useState("");
+  const [selectedProductId, setSelectedProductId] = useState("");
   const [quantity, setQuantity] = useState(1);
 
-  const selectedItem = items.find((i) => i.name === item);
-  const total = selectedItem ? selectedItem.price * quantity : 0;
+  const selectedItem = items.find((i) => i.id === selectedProductId);
+  const total = selectedItem
+    ? (parseFloat(selectedItem.price) * quantity).toFixed(2)
+    : "0.00";
+
+  // Fetch customers
+  useEffect(() => {
+    const fetchCustomers = async () => {
+      try {
+        const res = await axios.get("/api/customer/get_customer");
+        if (res.data.success) {
+          setCustomers(res.data.data);
+        } else {
+          console.error("Failed to fetch customers:", res.data.message);
+        }
+      } catch (error) {
+        console.error("Error fetching customers:", error);
+      } finally {
+        setLoadingCustomers(false);
+      }
+    };
+
+    fetchCustomers();
+  }, []);
+
+  // Fetch items
+  useEffect(() => {
+    const fetchItems = async () => {
+      try {
+        const res = await axios.get("/api/products/list");
+        setItems(res.data);
+      } catch (error) {
+        console.error("Error fetching items:", error);
+      } finally {
+        setLoadingItems(false);
+      }
+    };
+
+    fetchItems();
+  }, []);
 
   const handleQuantityChange = (val) => {
     const num = parseInt(val);
     if (!isNaN(num) && num >= 0) setQuantity(num);
   };
 
-  const handleSubmit = () => {
-    alert(
-      `Receipt Generated!\nCustomer: ${customer}\nItem: ${item}\nQuantity: ${quantity}\nTotal: $${total}`
-    );
+  const handleSubmit = async () => {
+    if (!selectedCustomerId || !selectedProductId || !selectedItem) return;
+
+    try {
+      const res = await axios.post("/api/sale/add", {
+        customer_id: selectedCustomerId,
+        product_id: selectedProductId,
+        quantity,
+        totalAmount: parseFloat(total),
+      });
+
+      alert("Sale submitted successfully!");
+    } catch (error) {
+      console.error("Error submitting sale:", error);
+      alert("Failed to submit sale.");
+    }
   };
 
   return (
@@ -60,31 +104,45 @@ export default function SalesPage() {
       <FormControl fullWidth margin="normal">
         <InputLabel>Customer Name</InputLabel>
         <Select
-          value={customer}
+          value={selectedCustomerId}
           label="Customer Name"
-          onChange={(e) => setCustomer(e.target.value)}
+          onChange={(e) => setSelectedCustomerId(e.target.value)}
+          disabled={loadingCustomers}
         >
-          {customers.map((c) => (
-            <MenuItem key={c} value={c}>
-              {c}
+          {loadingCustomers ? (
+            <MenuItem value="">
+              <CircularProgress size={24} />
             </MenuItem>
-          ))}
+          ) : (
+            customers.map((c) => (
+              <MenuItem key={c.id} value={c.id}>
+                {c.name} ({c.account_type_name})
+              </MenuItem>
+            ))
+          )}
         </Select>
       </FormControl>
 
       {/* Item Dropdown */}
       <FormControl fullWidth margin="normal">
-        <InputLabel>Item Name</InputLabel>
+        <InputLabel>Item</InputLabel>
         <Select
-          value={item}
-          label="Item Name"
-          onChange={(e) => setItem(e.target.value)}
+          value={selectedProductId}
+          label="Item"
+          onChange={(e) => setSelectedProductId(e.target.value)}
+          disabled={loadingItems}
         >
-          {items.map((i) => (
-            <MenuItem key={i.name} value={i.name}>
-              {i.name} - ${i.price}
+          {loadingItems ? (
+            <MenuItem value="">
+              <CircularProgress size={24} />
             </MenuItem>
-          ))}
+          ) : (
+            items.map((i) => (
+              <MenuItem key={i.id} value={i.id}>
+                {i.name} - ${i.price}
+              </MenuItem>
+            ))
+          )}
         </Select>
       </FormControl>
 
@@ -119,7 +177,7 @@ export default function SalesPage() {
         fullWidth
         sx={{ mt: 4 }}
         onClick={handleSubmit}
-        disabled={!customer || !item}
+        disabled={!selectedCustomerId || !selectedProductId}
       >
         Generate Receipt
       </Button>
