@@ -30,6 +30,7 @@ export default function LoginPage() {
     });
 
     const submitLogin = async () => {
+        const loadingToast = toast.loading("Loggin In...")
         console.log(loginData);
         const res = await axios.post("/api/auth/login", {
             email: loginData.email,
@@ -43,6 +44,7 @@ export default function LoginPage() {
             email: res.data.email,
         });
         localStorage.setItem("curr_user", JSON.stringify(res.data));
+        toast.remove(loadingToast);
         toast.success("Login successfull");
         router.push("/");
     }
