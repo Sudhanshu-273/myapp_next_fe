@@ -1,14 +1,13 @@
 'use client';
 
-import { CssBaseline } from '@mui/material';
+import {CssBaseline} from '@mui/material';
 
-export default function RootLayout({ children }) {
-  return (
-    <html lang="en">
-      <body>
-        <CssBaseline />
-        <main>{children}</main>
-      </body>
-    </html>
-  );
+export default function RootLayout({children}) {
+    return (
+        <>
+            <CssBaseline/>
+            <main>{children}</main>
+        </>
+    )
+        ;
 }
