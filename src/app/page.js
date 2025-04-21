@@ -6,6 +6,7 @@ import {UserContext} from "@/context/UserContext";
 import toast from "react-hot-toast";
 import {useRouter} from "next/navigation";
 import {Button} from "@mui/material";
+import Navbar from "@/components/Navbar/navbar";
 
 export default function Home() {
     console.log(process.env.DEV_PORT)
@@ -34,8 +35,9 @@ export default function Home() {
     }, [])
     return (
         <>
-            Hello {user.email}
-            <Button onClick={handleLogout}>Logout</Button>
+            <Navbar></Navbar>
+            {/* Hello {user.email} */}
+            {/* <Button onClick={handleLogout}>Logout</Button> */}
         </>
     );
 }
