@@ -116,7 +116,7 @@ export default function SalesPage() {
           ) : (
             customers.map((c) => (
               <MenuItem key={c.id} value={c.id}>
-                {c.name} ({c.account_type_name})
+                {c.name} ({c.title})
               </MenuItem>
             ))
           )}
