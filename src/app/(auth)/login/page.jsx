@@ -18,8 +18,6 @@ import {useRouter} from "next/navigation";
 
 export default function LoginPage() {
 
-    const API_URL = process.env.NEXT_PUBLIC_BASE_URL
-
     const router = useRouter()
 
     const {user, setUser} = useContext(UserContext)
@@ -48,10 +46,6 @@ export default function LoginPage() {
         toast.success("Login successfull");
         router.push("/");
     }
-
-    // useEffect(() => {
-    //     console.log(loginData);
-    // }, [loginData])
 
     useEffect(() => {
         console.log("User logged in : ", user)
