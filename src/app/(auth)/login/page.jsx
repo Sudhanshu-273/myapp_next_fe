@@ -34,7 +34,8 @@ export default function LoginPage() {
             email: loginData.email,
             password: loginData.password
         });
-        console.log("user",res.data);
+        console.log(res.data);
+
         setUser({
             ...user,
             user_data: res.data.data,
