@@ -11,9 +11,12 @@ import {
 } from '@mui/material';
 import axios from 'axios';
 import Link from 'next/link';
+import toast from "react-hot-toast";
 import { useEffect, useState } from 'react';
+import { useRouter } from "next/navigation";
 
 export default function RegisterPage() {
+  const router = useRouter();
 
   const [loginData, setLoginData] = useState({
     email: "",
@@ -21,18 +24,27 @@ export default function RegisterPage() {
     confirmPassword: ""
   });
 
-  const submitRegister = async () => {
-    const res = await axios.post("/api/auth/register", {
-      email: loginData.email,
-      password: loginData.password,
-      confirmPassword: loginData.confirmPassword
-    });
-    console.log(res);
-  }
+  const submitRegister = async (e) => {
+    e.preventDefault();
+
+    try {
+      const res = await axios.post("/api/auth/register", {
+        email: loginData.email,
+        password: loginData.password,
+        confirmPassword: loginData.confirmPassword
+      });
+
+      console.log("Registration successful:", res.data);
+      toast.success("Registered successfully!");
+      router.push("/login")
+    } catch (error) {
+      console.error("Registration error:", error);
+      toast.error(error?.response?.data?.message || "Something went wrong.");
+    }
+  };
+
 
   useEffect(() => {
-    console.log(loginData);
-    // submitRegister();
   }, [loginData])
 
   useEffect(() => {
@@ -57,6 +69,7 @@ export default function RegisterPage() {
             borderRadius: 2,
           }}
         >
+          <form onSubmit={submitRegister}>
           <Stack spacing={3}>
             <Typography variant="h5" fontWeight={600} textAlign="center">
               Create an Account
@@ -81,7 +94,7 @@ export default function RegisterPage() {
               })
             }} label="Confirm Password" type="password" fullWidth />
 
-            <Button onClick={submitRegister} variant="contained" fullWidth size="large">
+            <Button type='submit' variant="contained" fullWidth size="large">
               Register
             </Button>
 
@@ -92,6 +105,7 @@ export default function RegisterPage() {
               </MuiLink>
             </Typography>
           </Stack>
+            </form>
         </Paper>
       </Box>
     </>
