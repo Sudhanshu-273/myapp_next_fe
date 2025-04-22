@@ -41,14 +41,19 @@ function Navbar() {
     setAnchorElUser(null);
   };
 
-  const handleLogout = (e) => {
+  const handleButton = (e) => {
     // console.log(e.target.innerText);
     const val = e.target.innerText;
-    if (val !== "Logout") return;
-    localStorage.removeItem("curr_user");
-    router.refresh();
-    router.push("/login");
-    toast.success("Logout successfull");
+    if (val === "Logout"){
+      localStorage.removeItem("curr_user");
+      router.refresh();
+      router.push("/login");
+      toast.success("Logout successfull");
+    }
+    else if(val==="Profile"){
+      router.refresh();
+      router.push("/dashboard/account");
+    }
   };
 
   return (
@@ -141,7 +146,7 @@ function Navbar() {
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                <Avatar alt="Remy Sharp" />
               </IconButton>
             </Tooltip>
             <Menu
@@ -164,7 +169,7 @@ function Navbar() {
                 <MenuItem key={setting} onClick={handleCloseUserMenu}>
                   <Typography
                     sx={{ textAlign: "center" }}
-                    onClick={(e) => handleLogout(e)}
+                    onClick={(e) => handleButton(e)}
                   >
                     {setting}
                   </Typography>

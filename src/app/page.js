@@ -28,15 +28,15 @@ export default function Home() {
         toast.success("Logout successfull");
     }
 
-    // console.log(data)
     const {user} = useContext(UserContext);
+    console.log(user);
 
     useEffect(() => {
     }, [])
     return (
         <>
             <Navbar></Navbar>
-            {/* Hello {user.email} */}
+            Hello {user.email}
             {/* <Button onClick={handleLogout}>Logout</Button> */}
         </>
     );

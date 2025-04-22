@@ -1,3 +1,5 @@
+"use client";
+
 import React from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
@@ -7,15 +9,9 @@ import CardContent from '@mui/material/CardContent';
 import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import {useContext} from "react";
+import {UserContext} from "@/context/UserContext";
 
-const user = {
-  name: 'Sofia Rivers',
-  avatar: '/assets/avatar.png',
-  jobTitle: 'Senior Developer',
-  country: 'USA',
-  city: 'Los Angeles',
-  timezone: 'GTM-7',
-};
 
 function stringToColor(string) {
   let hash = 0;
@@ -37,32 +33,45 @@ function stringToColor(string) {
   return color;
 }
 
-function stringAvatar(name) {
+function stringAvatar(name = "") {
+  const nameParts = name.trim().split(" ").filter(Boolean);
+
+  let initials = "";
+
+  if (nameParts.length >= 2) {
+    initials = `${nameParts[0][0]}${nameParts[1][0]}`;
+  } else if (nameParts.length === 1) {
+    initials = nameParts[0][0];
+  } else {
+    initials = "?";
+  }
+
   return {
     sx: {
       bgcolor: stringToColor(name),
     },
-    children: `${name.split(' ')[0][0]}${name.split(' ')[1][0]}`,
+    children: initials.toUpperCase(),
   };
 }
 
+
 export default function AccountInfo() {
+  const {user, setUser} = useContext(UserContext);
+  console.log(user);
   return (
     <Card sx={{
       borderRadius:5,
+      
     }}>
       <CardContent>
         <Stack spacing={2} sx={{ alignItems: 'center' }}>
           <div>
-            <Avatar {...stringAvatar(user.name)} sx={{ height: '80px', width: '80px' }}/>
+            <Avatar {...stringAvatar(user.user_data.name)} sx={{ height: '80px', width: '80px', fontSize: '32px' }}/>
           </div>
           <Stack spacing={1} sx={{ textAlign: 'center' }}>
-            <Typography variant="h5">{user.name}</Typography>
+            <Typography variant="h5">{user.user_data.name}</Typography>
             <Typography color="text.secondary" variant="body2">
-              {user.city} {user.country}
-            </Typography>
-            <Typography color="text.secondary" variant="body2">
-              {user.timezone}
+              {user.user_data.title}
             </Typography>
           </Stack>
         </Stack>
