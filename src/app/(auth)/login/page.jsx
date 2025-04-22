@@ -19,7 +19,7 @@ import {useRouter} from "next/navigation";
 export default function LoginPage() {
 
     const router = useRouter()
-
+    
     const {user, setUser} = useContext(UserContext)
 
     const [loginData, setLoginData] = useState({
@@ -35,11 +35,11 @@ export default function LoginPage() {
             password: loginData.password
         });
         console.log(res.data);
+
         setUser({
             ...user,
-            user_id: res.data.user_id,
+            user_data: res.data.data,
             token: res.data.token,
-            email: res.data.email,
         });
         localStorage.setItem("curr_user", JSON.stringify(res.data));
         toast.remove(loadingToast);
