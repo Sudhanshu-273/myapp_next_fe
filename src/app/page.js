@@ -1,16 +1,16 @@
-"use client"
+"use client";
 
 import Image from "next/image";
-import {useContext, useEffect} from "react";
-import {UserContext} from "@/context/UserContext";
+import { useContext, useEffect } from "react";
+import { UserContext } from "@/context/UserContext";
 import toast from "react-hot-toast";
-import {useRouter} from "next/navigation";
-import {Button} from "@mui/material";
+import { useRouter } from "next/navigation";
+import { Button } from "@mui/material";
 import Navbar from "@/components/Navbar/navbar";
 
 export default function Home() {
-    console.log(process.env.DEV_PORT)
-    const router = useRouter()
+    console.log(process.env.DEV_PORT);
+    const router = useRouter();
 
     useEffect(() => {
         const data = localStorage.getItem("curr_user");
@@ -19,20 +19,19 @@ export default function Home() {
             toast.error("User not logged in");
             router.push("/login");
         }
-    }, [])
+    }, []);
 
     const handleLogout = () => {
         localStorage.removeItem("curr_user");
         router.refresh();
         router.push("/login");
         toast.success("Logout successfull");
-    }
+    };
 
-    // console.log(data)
-    const {user} = useContext(UserContext);
+    const { user } = useContext(UserContext);
+    console.log(user);
 
-    useEffect(() => {
-    }, [])
+    useEffect(() => {}, []);
     return (
         <>
             <Navbar></Navbar>

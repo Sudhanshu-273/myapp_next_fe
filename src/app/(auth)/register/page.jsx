@@ -30,7 +30,7 @@ export default function RegisterPage() {
       email: loginData.email,
       password: loginData.password,
       confirmPassword: loginData.confirmPassword,
-      accountType: loginData.accountType
+      accountType: loginData.accountType,
     });
     console.log(res);
   };
@@ -70,87 +70,89 @@ export default function RegisterPage() {
             borderRadius: 2,
           }}
         >
-          <Stack spacing={3}>
-            <Typography variant="h5" fontWeight={600} textAlign="center">
-              Create an Account
-            </Typography>
+          <form onSubmit={submitRegister}>
+            <Stack spacing={3}>
+              <Typography variant="h5" fontWeight={600} textAlign="center">
+                Create an Account
+              </Typography>
 
-            <TextField
-              onChange={(e) => {
-                setLoginData({
-                  ...loginData,
-                  email: e.target.value,
-                });
-              }}
-              label="Email"
-              type="email"
-              fullWidth
-            />
-            <TextField
-              onChange={(e) => {
-                setLoginData({
-                  ...loginData,
-                  password: e.target.value,
-                });
-              }}
-              label="Password"
-              type="password"
-              fullWidth
-            />
-            <TextField
-              onChange={(e) => {
-                setLoginData({
-                  ...loginData,
-                  confirmPassword: e.target.value,
-                });
-              }}
-              label="Confirm Password"
-              type="password"
-              fullWidth
-            />
-
-            <FormControl fullWidth>
-              <InputLabel id="demo-simple-select-label">
-                Account Type
-              </InputLabel>
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                label="Account Type"
-                value={loginData.accountType}
+              <TextField
                 onChange={(e) => {
                   setLoginData({
                     ...loginData,
-                    accountType: e.target.value,
+                    email: e.target.value,
                   });
                 }}
-              >
-                {accountTypes.map((item) => {
-                  return <MenuItem value={item.id}>{item.title}</MenuItem>;
-                })}
-                {/* <MenuItem value={10}>Owner</MenuItem>
+                label="Email"
+                type="email"
+                fullWidth
+              />
+              <TextField
+                onChange={(e) => {
+                  setLoginData({
+                    ...loginData,
+                    password: e.target.value,
+                  });
+                }}
+                label="Password"
+                type="password"
+                fullWidth
+              />
+              <TextField
+                onChange={(e) => {
+                  setLoginData({
+                    ...loginData,
+                    confirmPassword: e.target.value,
+                  });
+                }}
+                label="Confirm Password"
+                type="password"
+                fullWidth
+              />
+
+              <FormControl fullWidth>
+                <InputLabel id="demo-simple-select-label">
+                  Account Type
+                </InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  label="Account Type"
+                  value={loginData.accountType}
+                  onChange={(e) => {
+                    setLoginData({
+                      ...loginData,
+                      accountType: e.target.value,
+                    });
+                  }}
+                >
+                  {accountTypes.map((item) => {
+                    return <MenuItem value={item.id}>{item.title}</MenuItem>;
+                  })}
+                  {/* <MenuItem value={10}>Owner</MenuItem>
                 <MenuItem value={20}>Trainer</MenuItem>
                 <MenuItem value={30}>Subscriber</MenuItem>
                 <MenuItem value={30}>Worker</MenuItem> */}
-              </Select>
-            </FormControl>
+                </Select>
+              </FormControl>
 
-            <Button
-              onClick={submitRegister}
-              variant="contained"
-              fullWidth
-              size="large"
-            >
-              Register
-            </Button>
+              <Button
+                onClick={submitRegister}
+                variant="contained"
+                fullWidth
+                size="large"
+              >
+                Register
+              </Button>
 
-            <Typography variant="body2" textAlign="center">
-              Already have an account?{" "}
-              <MuiLink component={Link} href="/login" underline="hover">
-                Login
-              </MuiLink>
-            </Typography>
-          </Stack>
+              <Typography variant="body2" textAlign="center">
+                Already have an account?{" "}
+                <MuiLink component={Link} href="/login" underline="hover">
+                  Login
+                </MuiLink>
+              </Typography>
+            </Stack>
+          </form>
         </Paper>
       </Box>
     </>
