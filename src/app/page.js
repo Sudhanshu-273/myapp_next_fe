@@ -36,7 +36,7 @@ export default function Home() {
     return (
         <>
             <Navbar></Navbar>
-            {/* Hello {user.email} */}
+            Hello {user.user_data.email}
             {/* <Button onClick={handleLogout}>Logout</Button> */}
         </>
     );
