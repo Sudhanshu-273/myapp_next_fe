@@ -26,6 +26,7 @@ export default function ChangePassword({ open, onClose }) {
   const handleSendOtp = async () => {
     try {
       const res = await axios.post("/api/auth/send_otp", { email: data.email });
+      console.log(res.data);
       if (res.data.success) {
         toast.success("OTP sent to your email");
         setStep(2);
@@ -64,7 +65,8 @@ export default function ChangePassword({ open, onClose }) {
         toast.success("Password changed successfully");
         handleClose();
       } else throw new Error();
-    } catch {
+    } catch(err) {
+      console.log(err);
       toast.error("Failed to change password");
     }
   };
