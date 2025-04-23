@@ -35,7 +35,15 @@ export default function LoginPage() {
     }));
   };
 
-  const submitLogin = async () => {
+  const handleKeyDown = (e) => {
+    console.log(e.key)
+    if (e.key === "Enter") {
+      submitLogin(e);
+    }
+  }
+
+  const submitLogin = async (e) => {
+    e.preventDefault();
     if (!loginData.email || !loginData.password) {
       toast.error("Please fill in all fields");
       return;
@@ -57,6 +65,7 @@ export default function LoginPage() {
     } catch (error) {
       toast.remove(loadingToast);
       toast.error("Login failed");
+      console.error("Error during login:", error);
     }
   };
 
@@ -71,6 +80,7 @@ export default function LoginPage() {
       alignItems="center"
       justifyContent="center"
       sx={{ backgroundColor: '#f5f5f5' }}
+      onKeyDown={handleKeyDown}
     >
       <Paper
         elevation={2}
@@ -112,7 +122,7 @@ export default function LoginPage() {
             Forgot Password?
           </Typography>
 
-          <Button onClick={submitLogin} variant="contained" fullWidth size="large">
+          <Button onClick={(e) => submitLogin(e)} variant="contained" fullWidth size="large">
             Login
           </Button>
 

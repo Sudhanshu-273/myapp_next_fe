@@ -16,8 +16,12 @@ import Select from "@mui/material/Select";
 import axios from "axios";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 export default function RegisterPage() {
+  const router = useRouter();
+
   const [loginData, setLoginData] = useState({
     email: "",
     password: "",
@@ -25,7 +29,25 @@ export default function RegisterPage() {
     accountType: "",
   });
 
-  const submitRegister = async () => {
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      submitRegister(e);
+    }
+  }
+
+  const submitRegister = async (e) => {
+    e.preventDefault();
+    if (
+      !loginData.email ||
+      !loginData.password ||
+      !loginData.confirmPassword ||
+      !loginData.accountType
+    ) {
+      toast.error("Please fill in all fields");
+    }
+
+    const loadingToast = toast.loading("Registering...");
+
     const res = await axios.post("/api/auth/register", {
       email: loginData.email,
       password: loginData.password,
@@ -33,6 +55,9 @@ export default function RegisterPage() {
       accountType: loginData.accountType,
     });
     console.log(res);
+    toast.remove(loadingToast);
+    toast.success("Registration successfull");
+    router.push("/login");
   };
 
   const [accountTypes, setAccountTypes] = useState([]);
@@ -137,7 +162,8 @@ export default function RegisterPage() {
               </FormControl>
 
               <Button
-                onClick={submitRegister}
+                onClick={(e) => submitRegister(e)}
+                onKeyDown={handleKeyDown}
                 variant="contained"
                 fullWidth
                 size="large"
