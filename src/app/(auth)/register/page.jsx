@@ -29,11 +29,6 @@ export default function RegisterPage() {
     accountType: "",
   });
 
-  const handleKeyDown = (e) => {
-    if (e.key === "Enter") {
-      submitRegister(e);
-    }
-  }
 
   const submitRegister = async (e) => {
     e.preventDefault();
@@ -154,16 +149,11 @@ export default function RegisterPage() {
                   {accountTypes.map((item) => {
                     return <MenuItem value={item.id}>{item.title}</MenuItem>;
                   })}
-                  {/* <MenuItem value={10}>Owner</MenuItem>
-                <MenuItem value={20}>Trainer</MenuItem>
-                <MenuItem value={30}>Subscriber</MenuItem>
-                <MenuItem value={30}>Worker</MenuItem> */}
                 </Select>
               </FormControl>
 
               <Button
-                onClick={(e) => submitRegister(e)}
-                onKeyDown={handleKeyDown}
+                type="submit"
                 variant="contained"
                 fullWidth
                 size="large"

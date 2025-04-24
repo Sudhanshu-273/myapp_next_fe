@@ -63,9 +63,12 @@ export default function LoginPage() {
       toast.success("Login successful");
       router.push("/");
     } catch (error) {
-      toast.remove(loadingToast);
-      toast.error("Login failed");
+      toast.dismiss(loadingToast);
+      const errorMessage =
+        error.response?.data?.message || "Login failed. Please try again.";
+      toast.error(errorMessage);
       console.error("Error during login:", error);
+
     }
   };
 
@@ -91,6 +94,7 @@ export default function LoginPage() {
           borderRadius: 2,
         }}
       >
+
         <Stack spacing={3}>
           <Typography variant="h5" fontWeight={600} textAlign="center">
             Welcome Back
@@ -133,6 +137,7 @@ export default function LoginPage() {
             </MuiLink>
           </Typography>
         </Stack>
+          
       </Paper>
 
       <ChangePassword open={modalOpen} onClose={() => setModalOpen(false)} />
