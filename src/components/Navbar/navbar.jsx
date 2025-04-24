@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import * as React from "react";
 import AppBar from "@mui/material/AppBar";
@@ -17,7 +17,7 @@ import AdbIcon from "@mui/icons-material/Adb";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 
-const pages = ["Products", "Pricing", "Blog"];
+const pages = ["Sales", "Purchases", "Blog"];
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
 function Navbar() {
@@ -44,15 +44,26 @@ function Navbar() {
   const handleButton = (e) => {
     // console.log(e.target.innerText);
     const val = e.target.innerText;
-    if (val === "Logout"){
+    if (val === "Logout") {
       localStorage.removeItem("curr_user");
-      router.refresh();
+      // router.refresh();
       router.push("/login");
       toast.success("Logout successfull");
-    }
-    else if(val==="Profile"){
-      router.refresh();
+    } else if (val === "Profile") {
+      // router.refresh();
       router.push("/dashboard/account");
+    }
+  };
+
+  const handlePageClick = (e) => {
+    handleCloseNavMenu();
+    console.log(e.target.innerText);
+    const val = e.target.innerText;
+    if (val === "SALES") {
+      console.log("Sales");
+      router.push("/sales");
+    } else if (val === "Purchases") {
+      router.push("/purchase");
     }
   };
 
@@ -75,6 +86,7 @@ function Navbar() {
               color: "inherit",
               textDecoration: "none",
             }}
+            onClick={() => router.push("/")}
           >
             LOGO
           </Typography>
@@ -107,7 +119,7 @@ function Navbar() {
               sx={{ display: { xs: "block", md: "none" } }}
             >
               {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
+                <MenuItem key={page}>
                   <Typography sx={{ textAlign: "center" }}>{page}</Typography>
                 </MenuItem>
               ))}
@@ -136,7 +148,7 @@ function Navbar() {
             {pages.map((page) => (
               <Button
                 key={page}
-                onClick={handleCloseNavMenu}
+                onClick={handlePageClick}
                 sx={{ my: 2, color: "white", display: "block" }}
               >
                 {page}
