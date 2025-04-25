@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useState } from "react";
@@ -16,6 +15,7 @@ import toast from "react-hot-toast";
 
 export default function ChangePassword({ open, onClose }) {
   const [step, setStep] = useState(1);
+  const [canClose, setCanClose] = useState(false); // 👈 control closing
   const [data, setData] = useState({
     email: "",
     otp: "",
@@ -24,29 +24,41 @@ export default function ChangePassword({ open, onClose }) {
   });
 
   const handleSendOtp = async () => {
+    const loadingToast = toast.loading("Sending OTP...");
     try {
       const res = await axios.post("/api/auth/send_otp", { email: data.email });
-      console.log(res.data);
+      toast.dismiss(loadingToast);
       if (res.data.success) {
+        console.log(res.data.otp);
         toast.success("OTP sent to your email");
         setStep(2);
-      } else throw new Error();
-    } catch {
-      toast.error("Failed to send OTP");
+      } else {
+        throw new Error(res.data.message || "Failed to send OTP");
+      }
+    } catch (error) {
+      toast.dismiss(loadingToast);
+      toast.error(
+        error.response?.data?.message || error.message || "Failed to send OTP"
+      );
     }
   };
 
   const handleVerifyOtp = async () => {
+    const loadingToast = toast.loading("Verifying OTP...");
     try {
       const res = await axios.post("/api/auth/verify_otp", {
         email: data.email,
         otp: data.otp,
       });
+      toast.dismiss(loadingToast);
       if (res.data.success) {
         toast.success("OTP verified");
         setStep(3);
-      } else throw new Error();
-    } catch {
+      } else {
+        throw new Error("Invalid OTP");
+      }
+    } catch (error) {
+      toast.dismiss(loadingToast);
       toast.error("Invalid OTP");
     }
   };
@@ -56,17 +68,24 @@ export default function ChangePassword({ open, onClose }) {
       toast.error("Passwords do not match");
       return;
     }
+
+    const loadingToast = toast.loading("Changing password...");
     try {
       const res = await axios.patch("/api/user/forgotPassword", {
         email: data.email,
         newPassword: data.password,
       });
+
+      toast.dismiss(loadingToast);
       if (res.data.success) {
         toast.success("Password changed successfully");
-        handleClose();
-      } else throw new Error();
-    } catch(err) {
-      console.log(err);
+        setCanClose(true); // 👈 allow closing
+        handleClose();     // 👈 trigger close after success
+      } else {
+        throw new Error("Failed to change password");
+      }
+    } catch (err) {
+      toast.dismiss(loadingToast);
       toast.error("Failed to change password");
     }
   };
@@ -74,11 +93,25 @@ export default function ChangePassword({ open, onClose }) {
   const handleClose = () => {
     onClose();
     setStep(1);
+    setCanClose(false); // 👈 reset for next time
     setData({ email: "", otp: "", password: "", confirmPassword: "" });
   };
 
+  const handleConditionalClose = (event, reason) => {
+    // block all closing until canClose is true
+    if ((reason === "backdropClick" || reason === "escapeKeyDown") && !canClose) {
+      return;
+    }
+    handleClose();
+  };
+
   return (
-    <Dialog open={open} onClose={handleClose} fullWidth>
+    <Dialog
+      open={open}
+      onClose={handleConditionalClose}
+      fullWidth
+      disableEscapeKeyDown={!canClose} // block ESC too
+    >
       <DialogTitle>
         {step === 1 && "Forgot Password"}
         {step === 2 && "Verify OTP"}
@@ -131,10 +164,16 @@ export default function ChangePassword({ open, onClose }) {
       </DialogContent>
 
       <DialogActions>
-        <Button onClick={handleClose}>Cancel</Button>
+        <Button
+          onClick={handleClose}
+        >
+          Cancel
+        </Button>
         {step === 1 && <Button onClick={handleSendOtp}>Send OTP</Button>}
         {step === 2 && <Button onClick={handleVerifyOtp}>Verify</Button>}
-        {step === 3 && <Button onClick={handleChangePassword}>Change Password</Button>}
+        {step === 3 && (
+          <Button onClick={handleChangePassword}>Change Password</Button>
+        )}
       </DialogActions>
     </Dialog>
   );
