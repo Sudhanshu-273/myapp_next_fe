@@ -107,6 +107,22 @@ export default function SalesPage() {
               label="Item"
               onChange={(e) => handleItemChange(index, "productId", e.target.value)}
               disabled={loadingItems}
+              MenuProps={{
+                anchorOrigin: {
+                  vertical: "bottom",
+                  horizontal: "left",
+                },
+                transformOrigin: {
+                  vertical: "top",
+                  horizontal: "left",
+                },
+                PaperProps: {
+                  style: {
+                    maxHeight: 300, 
+                    overflowY: "auto",
+                  },
+                },
+              }}
             >
               {loadingItems ? (
                 <MenuItem value="">
