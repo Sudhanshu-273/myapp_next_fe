@@ -19,6 +19,7 @@ import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { UserContext } from "@/context/UserContext";
+import toast from "react-hot-toast";
 
 export default function SalesPage() {
   const { user } = useContext(UserContext);
@@ -31,7 +32,7 @@ export default function SalesPage() {
   useEffect(() => {
     const fetchItems = async () => {
       try {
-        const res = await axios.get("/api/products/list");
+        const res = await axios.get("/api/admin/products/list");
         setItems(res.data);
       } catch (error) {
         console.error("Error fetching items:", error);
@@ -73,8 +74,10 @@ export default function SalesPage() {
 
   const handleSubmit = async () => {
     // console.log("Details:", saleItems, user, calculateTotal());
+    const loadingToast = toast.loading("Processing...");
+
     try {
-      await axios.post("/api/sale/add", {
+      await axios.post("/api/member/sale/add", {
         user_id: user.user_data.id,
         items: saleItems.map((item) => ({
           product_id: item.productId,
@@ -83,10 +86,12 @@ export default function SalesPage() {
         })),
         totalAmount: parseFloat(calculateTotal()),
       });
-
-      alert("Sale submitted successfully!");
+      toast.remove(loadingToast);
+      toast.success("Sale submitted successfully!");
       setSaleItems([{ productId: "", quantity: 1, price: 0 }]);
     } catch (error) {
+      toast.remove(loadingToast);
+      toast.error("Sale could not be added!");
       console.error("Error submitting sale:", error);
       alert("Failed to submit sale.");
     }
