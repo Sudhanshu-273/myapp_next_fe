@@ -8,6 +8,5 @@ export default function RootLayout({children}) {
             <CssBaseline/>
             <main>{children}</main>
         </>
-    )
-        ;
+    );
 }

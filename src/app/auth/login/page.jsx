@@ -132,7 +132,7 @@ export default function LoginPage() {
 
           <Typography variant="body2" textAlign="center">
             Don't have an account?{" "}
-            <MuiLink component={Link} href="/register" underline="hover">
+            <MuiLink component={Link} href="/auth/register" underline="hover">
               Register
             </MuiLink>
           </Typography>
