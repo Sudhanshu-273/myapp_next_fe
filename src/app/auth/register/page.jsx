@@ -52,7 +52,7 @@ export default function RegisterPage() {
     console.log(res);
     toast.remove(loadingToast);
     toast.success("Registration successfull");
-    router.push("/login");
+    router.push("/auth/login");
   };
 
   const [accountTypes, setAccountTypes] = useState([]);
@@ -163,7 +163,7 @@ export default function RegisterPage() {
 
               <Typography variant="body2" textAlign="center">
                 Already have an account?{" "}
-                <MuiLink component={Link} href="/login" underline="hover">
+                <MuiLink component={Link} href="/auth/login" underline="hover">
                   Login
                 </MuiLink>
               </Typography>

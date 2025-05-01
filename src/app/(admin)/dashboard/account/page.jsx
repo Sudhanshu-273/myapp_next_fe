@@ -2,13 +2,11 @@ import React from "react";
 import {Grid,Box} from "@mui/material";
 import AccountForm from "@/components/dashboard/account/accountForm";
 import AccountInfo from "@/components/dashboard/account/accountInfo";
-import Navbar from "@/components/Navbar/navbar";
 
 
 export default function Page() {
   return (
     <>
-      <Navbar />
       <Box sx={{
         mt: 3,
         ml:40,

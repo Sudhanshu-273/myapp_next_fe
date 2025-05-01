@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import axios from 'axios';
 import {
   Container,
@@ -18,39 +18,56 @@ import {
   Select,
   Button,
   Box,
+  Snackbar,
+  Alert
 } from '@mui/material';
+import { UserContext } from '@/context/UserContext';
 
 export default function BuySubscriptionPage() {
-  const [plans, setPlans] = useState([
-    { id: 1, title: 'Basic Silver', duration: '1 Month', price: 199, active: true, plan_type: 'Basic' },
-    { id: 2, title: 'Basic Gold', duration: '3 Months', price: 499, active: true, plan_type: 'Basic' },
-    { id: 3, title: 'Premium Silver', duration: '1 Month', price: 399, active: true, plan_type: 'Premium' },
-    { id: 4, title: 'Premium Gold', duration: '6 Months', price: 1999, active: true, plan_type: 'Premium' },
-    { id: 5, title: 'Enterprise Starter', duration: '1 Month', price: 999, active: true, plan_type: 'Enterprise' },
-    { id: 6, title: 'Enterprise Pro', duration: '12 Months', price: 9999, active: true, plan_type: 'Enterprise' },
-    { id: 7, title: 'Enterprise Pro', duration: '12 Months', price: 9999, active: true, plan_type: 'Enterpriss' },
-    { id: 8, title: 'Enterprise Pro', duration: '12 Months', price: 9999, active: true, plan_type: 'Enterpiss' },
-    { id: 9, title: 'Enterprise Pro', duration: '12 Months', price: 9999, active: true, plan_type: 'Entepriss' },
-  ]);
-
-  const [descriptions, setDescriptions] = useState([
-    { plan_type: 'Basic', description: 'Basic plan suitable for individuals.' },
-    { plan_type: 'Premium', description: 'Premium plan with added benefits.' },
-    { plan_type: 'Enterprise', description: 'Enterprise plan for businesses and teams.' },
-    { plan_type: 'Enterprss', description: 'Enterprise plan for businesses and teams.' },
-    { plan_type: 'Enterpiss', description: 'Enterprise plan for businesses and teams.' },
-    { plan_type: 'Entepriss', description: 'Enterprise plan for businesses and teams.' },
-  ]);
-
+  const [plans, setPlans] = useState([]);
+  const [descriptions, setDescriptions] = useState([]);
   const [selectedType, setSelectedType] = useState('');
   const [selectedDuration, setSelectedDuration] = useState('');
   const [price, setPrice] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: '',
+    severity: 'success' // 'success' | 'error'
+  });
+
+  const showSnackbar = (message, severity = 'success') => {
+    setSnackbar({
+      open: true,
+      message,
+      severity
+    });
+  };
+
+
+  const { user } = useContext(UserContext);
+
   const planTypes = Array.from(new Set(plans.map((p) => p.plan_type)));
+
+  useEffect(() => {
+    // Fetch plans and descriptions from API
+    const fetchPlans = async () => {
+      try {
+        const res = await axios.get('/api/admin/plans/list');
+        setPlans(res.data.plans);
+        setDescriptions(res.data.descriptions);
+      } catch (error) {
+        console.error('Error fetching plans:', error);
+      }
+    };
+
+    fetchPlans();
+  }, []);
 
   useEffect(() => {
     if (selectedType && selectedDuration) {
       const matchedPlan = plans.find(
-        (p) => p.plan_type === selectedType && p.duration === selectedDuration
+        (p) => p.plan_type === selectedType && p.duration === parseInt(selectedDuration)
       );
       setPrice(matchedPlan ? matchedPlan.price : null);
     } else {
@@ -58,9 +75,49 @@ export default function BuySubscriptionPage() {
     }
   }, [selectedType, selectedDuration, plans]);
 
-  const handleBuy = () => {
-    if (!selectedType || !selectedDuration) return;
-    alert(`Subscription purchased successfully!\n\nPlan: ${selectedType}\nDuration: ${selectedDuration}\nPrice: ₹${price}`);
+  const handleBuy = async () => {
+    console.log(selectedType, selectedDuration, price);
+    
+    if (!selectedType || !selectedDuration) {
+      showSnackbar('Please select a plan type and duration before proceeding.', 'error');
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const res = await axios.post('/api/member/customer/add_subscription', {
+        user_id: user.user_data.id,
+        plan_type: selectedType,
+        duration: parseInt(selectedDuration),
+        price: price
+      });
+
+      console.log('Subscription bought:', res.data);
+
+      showSnackbar(`Subscription purchased successfully!`, 'success');
+
+      // Reset selections after purchase
+      setSelectedType('');
+      setSelectedDuration('');
+      setPrice(null);
+
+    } catch (error) {
+      console.error('Error purchasing subscription:', error);
+      if (error.response?.data?.message) {
+        showSnackbar(`Failed: ${error.response.data.message}`, 'error');
+      } else {
+        showSnackbar('An unexpected error occurred while purchasing subscription.', 'error');
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
+  // Helper to convert numeric duration to string
+  const formatDuration = (months) => {
+    return months === 1 ? '1 Month' : `${months} Months`;
   };
 
   return (
@@ -68,7 +125,7 @@ export default function BuySubscriptionPage() {
       <Typography variant="h4" gutterBottom>Buy Subscription</Typography>
 
       <Grid container spacing={4}>
-        {planTypes.map((type, index) => (
+        {planTypes.map((type) => (
           <Grid item xs={12} sm={6} key={type}>
             <Typography variant="h6" gutterBottom>{type}</Typography>
             <TableContainer component={Paper}>
@@ -82,7 +139,7 @@ export default function BuySubscriptionPage() {
                 <TableBody>
                   {plans.filter((plan) => plan.plan_type === type).map((plan) => (
                     <TableRow key={plan.id}>
-                      <TableCell>{plan.duration}</TableCell>
+                      <TableCell>{formatDuration(plan.duration)}</TableCell>
                       <TableCell>₹{plan.price}</TableCell>
                     </TableRow>
                   ))}
@@ -130,7 +187,7 @@ export default function BuySubscriptionPage() {
                   .filter((plan) => plan.plan_type === selectedType)
                   .map((plan) => (
                     <MenuItem key={`${plan.id}-${plan.duration}`} value={plan.duration}>
-                      {plan.duration}
+                      {formatDuration(plan.duration)}
                     </MenuItem>
                   ))}
               </Select>
@@ -145,14 +202,30 @@ export default function BuySubscriptionPage() {
               color="primary"
               fullWidth
               onClick={handleBuy}
-              disabled={!selectedType || !selectedDuration}
+              disabled={!selectedType || !selectedDuration || loading}
             >
-              Buy
+              {loading ? 'Processing...' : 'Buy'}
             </Button>
+
           </Grid>
         </Grid>
       </Box>
-    </Container>
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={4000}
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert
+          onClose={() => setSnackbar({ ...snackbar, open: false })}
+          severity={snackbar.severity}
+          sx={{ width: '100%' }}
+          variant="filled"
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
 
+    </Container>
   );
 }

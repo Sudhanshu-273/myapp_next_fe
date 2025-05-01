@@ -1,24 +1,23 @@
 "use client";
 
 import * as React from "react";
-import AppBar from "@mui/material/AppBar";
-import Box from "@mui/material/Box";
-import Toolbar from "@mui/material/Toolbar";
-import IconButton from "@mui/material/IconButton";
-import Typography from "@mui/material/Typography";
-import Menu from "@mui/material/Menu";
+import {
+  AppBar,
+  Box,
+  Toolbar,
+  IconButton,
+  Typography,
+  Menu,
+  Container,
+  Avatar,
+  Button,
+  Tooltip,
+  MenuItem,
+} from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-import Container from "@mui/material/Container";
-import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
-import Tooltip from "@mui/material/Tooltip";
-import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-
-const pages = ["Sales", "Purchases", "Blog"];
-const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
 function Navbar() {
   const router = useRouter();
@@ -26,45 +25,51 @@ function Navbar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
 
+  const pages = [
+    { label: "Sales", path: "/sales" },
+    { label: "Purchases", path: "/purchase" },
+    { label: "Blog", path: "/blog" },
+    { label: "Subscription", path: "/subscription" },
+  ];
+
+  const settings = [
+    { label: "Profile", action: () => router.push("/dashboard/account") },
+    { label: "Account", action: () => console.log("Account Clicked") },
+    { label: "Dashboard", action: () => console.log("Dashboard Clicked") },
+    {
+      label: "Logout",
+      action: () => {
+        localStorage.removeItem("curr_user");
+        router.push("/login");
+        toast.success("Logout successful");
+      },
+    },
+  ];
+
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
-  };
-  const handleOpenUserMenu = (event) => {
-    setAnchorElUser(event.currentTarget);
   };
 
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
   };
 
+  const handleOpenUserMenu = (event) => {
+    setAnchorElUser(event.currentTarget);
+  };
+
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
 
-  const handleButton = (e) => {
-    // console.log(e.target.innerText);
-    const val = e.target.innerText;
-    if (val === "Logout") {
-      localStorage.removeItem("curr_user");
-      // router.refresh();
-      router.push("/login");
-      toast.success("Logout successfull");
-    } else if (val === "Profile") {
-      // router.refresh();
-      router.push("/dashboard/account");
-    }
+  const handlePageNavigation = (path) => {
+    router.push(path);
+    handleCloseNavMenu();
   };
 
-  const handlePageClick = (e) => {
-    handleCloseNavMenu();
-    console.log(e.target.innerText);
-    const val = e.target.innerText;
-    if (val === "SALES") {
-      console.log("Sales");
-      router.push("/sales");
-    } else if (val === "Purchases") {
-      router.push("/purchase");
-    }
+  const handleSettingAction = (action) => {
+    action();
+    handleCloseUserMenu();
   };
 
   return (
@@ -75,8 +80,7 @@ function Navbar() {
           <Typography
             variant="h6"
             noWrap
-            component="a"
-            href="#app-bar-with-responsive-menu"
+            onClick={() => router.push("/")}
             sx={{
               mr: 2,
               display: { xs: "none", md: "flex" },
@@ -84,53 +88,42 @@ function Navbar() {
               fontWeight: 700,
               letterSpacing: ".3rem",
               color: "inherit",
-              textDecoration: "none",
+              cursor: "pointer",
             }}
-            onClick={() => router.push("/")}
           >
             LOGO
           </Typography>
 
+          {/* Mobile Menu */}
           <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
             <IconButton
               size="large"
-              aria-label="account of current user"
-              aria-controls="menu-appbar"
-              aria-haspopup="true"
               onClick={handleOpenNavMenu}
               color="inherit"
             >
               <MenuIcon />
             </IconButton>
             <Menu
-              id="menu-appbar"
               anchorEl={anchorElNav}
-              anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "left",
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "left",
-              }}
               open={Boolean(anchorElNav)}
               onClose={handleCloseNavMenu}
-              sx={{ display: { xs: "block", md: "none" } }}
+              anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+              transformOrigin={{ vertical: "top", horizontal: "left" }}
             >
-              {pages.map((page) => (
-                <MenuItem key={page}>
-                  <Typography sx={{ textAlign: "center" }}>{page}</Typography>
+              {pages.map(({ label, path }) => (
+                <MenuItem key={label} onClick={() => handlePageNavigation(path)}>
+                  <Typography textAlign="center">{label}</Typography>
                 </MenuItem>
               ))}
             </Menu>
           </Box>
+
+          {/* Logo Mobile */}
           <AdbIcon sx={{ display: { xs: "flex", md: "none" }, mr: 1 }} />
           <Typography
             variant="h5"
             noWrap
-            component="a"
-            href="#app-bar-with-responsive-menu"
+            onClick={() => router.push("/")}
             sx={{
               mr: 2,
               display: { xs: "flex", md: "none" },
@@ -139,22 +132,26 @@ function Navbar() {
               fontWeight: 700,
               letterSpacing: ".3rem",
               color: "inherit",
-              textDecoration: "none",
+              cursor: "pointer",
             }}
           >
             LOGO
           </Typography>
+
+          {/* Desktop Menu */}
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
-            {pages.map((page) => (
+            {pages.map(({ label, path }) => (
               <Button
-                key={page}
-                onClick={handlePageClick}
+                key={label}
+                onClick={() => handlePageNavigation(path)}
                 sx={{ my: 2, color: "white", display: "block" }}
               >
-                {page}
+                {label}
               </Button>
             ))}
           </Box>
+
+          {/* Avatar Menu */}
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
@@ -162,29 +159,16 @@ function Navbar() {
               </IconButton>
             </Tooltip>
             <Menu
-              sx={{ mt: "45px" }}
-              id="menu-appbar"
               anchorEl={anchorElUser}
-              anchorOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
+              anchorOrigin={{ vertical: "top", horizontal: "right" }}
+              transformOrigin={{ vertical: "top", horizontal: "right" }}
+              sx={{ mt: "45px" }}
             >
-              {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography
-                    sx={{ textAlign: "center" }}
-                    onClick={(e) => handleButton(e)}
-                  >
-                    {setting}
-                  </Typography>
+              {settings.map(({ label, action }) => (
+                <MenuItem key={label} onClick={() => handleSettingAction(action)}>
+                  <Typography textAlign="center">{label}</Typography>
                 </MenuItem>
               ))}
             </Menu>
@@ -194,4 +178,5 @@ function Navbar() {
     </AppBar>
   );
 }
+
 export default Navbar;
