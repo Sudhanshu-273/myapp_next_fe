@@ -40,7 +40,7 @@ function Navbar() {
       label: "Logout",
       action: () => {
         localStorage.removeItem("curr_user");
-        router.push("/login");
+        router.push("/auth/login");
         toast.success("Logout successful");
       },
     },

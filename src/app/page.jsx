@@ -2,7 +2,6 @@
 
 import { useContext } from "react";
 import { UserContext } from "@/context/UserContext";
-import { Box } from "@mui/material";
 
 export default function Home() {
   const { user } = useContext(UserContext);
