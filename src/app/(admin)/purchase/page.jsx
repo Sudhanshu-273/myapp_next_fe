@@ -73,7 +73,7 @@ export default function PurchasePage() {
     }
 
     try {
-      const res = await axios.post("/api/purchases/add", {
+      const res = await axios.post("/api/admin/purchases/add", {
         product_id: selectedProductId,
         quantity:quantity,
         price: parseFloat(price),
