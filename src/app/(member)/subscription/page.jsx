@@ -97,7 +97,6 @@ export default function BuySubscriptionPage() {
 
       showSnackbar(`Subscription purchased successfully!`, 'success');
 
-      // Reset selections after purchase
       setSelectedType('');
       setSelectedDuration('');
       setPrice(null);
