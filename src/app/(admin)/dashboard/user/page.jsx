@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-
+import axios from 'axios';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Table from '@mui/material/Table';
@@ -22,10 +22,12 @@ import UserTableHead from './components/user-table-head';
 import TableEmptyRows from './components/table-empty-rows';
 import UserTableToolbar from './components/user-table-toolbar';
 import { emptyRows, applyFilter, getComparator } from './components/utils';
+import { useEffect } from 'react';
 
 // ----------------------------------------------------------------------
 
 export default function Page() {
+  
   const [page, setPage] = useState(0);
 
   const [order, setOrder] = useState('asc');
@@ -37,6 +39,30 @@ export default function Page() {
   const [filterName, setFilterName] = useState('');
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
+
+  const [users, setUsers] = useState([]);
+
+  
+  
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await axios.get('/api/user/list');
+        console.log(response);
+        if (response.data.success) {
+          setUsers(response.data.data);
+        } else {
+          console.error('Failed to fetch users:', response.data.message);
+        }
+      } catch (error) {
+        console.error('Error fetching users:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUsers();
+  }, []);
 
   const handleSort = (event, id) => {
     const isAsc = orderBy === id && order === 'asc';
@@ -124,8 +150,9 @@ export default function Page() {
                 onSelectAllClick={handleSelectAllClick}
                 headLabel={[
                   { id: 'name', label: 'Name' },
-                  { id: 'company', label: 'Company' },
                   { id: 'role', label: 'Role' },
+                  { id: 'email', label: 'Email' },
+                  { id: 'phone', label: 'Phone' },
                   { id: 'isVerified', label: 'Verified', align: 'center' },
                   { id: 'status', label: 'Status' },
                   { id: '' },
@@ -139,6 +166,8 @@ export default function Page() {
                       key={row.id}
                       name={row.name}
                       role={row.role}
+                      email={row.email}
+                      phone={row.phone}
                       status={row.status}
                       company={row.company}
                       avatarUrl={row.avatarUrl}
