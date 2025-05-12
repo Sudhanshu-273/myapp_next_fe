@@ -24,7 +24,6 @@ import UserTableToolbar from './components/user-table-toolbar';
 import { emptyRows, applyFilter, getComparator } from './components/utils';
 import { useEffect } from 'react';
 
-// ----------------------------------------------------------------------
 
 export default function Page() {
   
@@ -126,9 +125,6 @@ export default function Page() {
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
         <Typography variant="h4">Users</Typography>
 
-        <Button variant="contained" color="inherit" startIcon={<Iconify icon="eva:plus-fill" />}>
-          New User
-        </Button>
       </Stack>
 
       <Card>

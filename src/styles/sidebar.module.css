@@ -1,0 +1,53 @@
+.dashboardContainer {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.sidebar {
+  width: 220px;
+  padding: 1rem;
+  background-color: #0f172a;
+  color: #fff;
+  height: 100vh;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.title {
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar li {
+  margin-bottom: 0.75rem;
+}
+
+.sidebar a {
+  color: #cbd5e1;
+  text-decoration: none;
+  font-size: 1rem;
+}
+
+.sidebar a:hover {
+  color: #facc15;
+}
+
+.activeLink {
+  font-weight: bold;
+  color: #facc15;
+}
+
+.mainContent {
+  flex: 1;
+  padding: 2rem;
+  overflow-y: auto;
+  background-color: #f8fafc;
+}

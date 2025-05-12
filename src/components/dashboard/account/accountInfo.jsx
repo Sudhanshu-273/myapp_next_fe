@@ -57,7 +57,7 @@ function stringAvatar(name = "") {
 
 export default function AccountInfo() {
   const {user, setUser} = useContext(UserContext);
-  console.log(user);
+  // console.log(user);
   return (
     <Card sx={{
       borderRadius:5,
