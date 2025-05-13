@@ -8,6 +8,7 @@ import Navbar from "@/components/Navbar/navbar";
 import LoadingScreen from "@/components/LoadingScreen";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import ThemeProvider from "@/theme"; 
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -18,7 +19,6 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
-
 
 export default function RootLayout({ children }) {
   const pathname = usePathname();
@@ -51,11 +51,13 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <Toaster position={"bottom-right"} />
-        <UserContextProvider>
-          {showNavbar && <Navbar />}
-          {children}
-        </UserContextProvider>
+        <Toaster position="bottom-right" />
+        <ThemeProvider> 
+          <UserContextProvider>
+            {showNavbar && <Navbar />}
+            {children}
+          </UserContextProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

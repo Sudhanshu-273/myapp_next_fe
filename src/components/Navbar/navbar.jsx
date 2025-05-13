@@ -35,7 +35,7 @@ function Navbar() {
   const settings = [
     { label: "Profile", action: () => router.push("/dashboard/account") },
     { label: "Account", action: () => console.log("Account Clicked") },
-    { label: "Dashboard", action: () => console.log("Dashboard Clicked") },
+    { label: "Dashboard", action: () => router.push("/dashboard") },
     {
       label: "Logout",
       action: () => {

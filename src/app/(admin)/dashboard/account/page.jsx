@@ -7,11 +7,7 @@ import AccountInfo from "@/components/dashboard/account/accountInfo";
 export default function Page() {
   return (
     <>
-      <Box sx={{
-        mt: 3,
-        ml:40,
-      mr:3,
-      }}>
+      <Box>
         <Grid container spacing={3}>
           <Grid size={{ xs: 12, sm: 6, md: 4 }}>
             <AccountInfo />
