@@ -1,37 +1,82 @@
-import numeral from 'numeral';
+/*
+ * Locales code
+ * https://gist.github.com/raushankrjha/d1c7e35cf87e69aa8b4208a8171a8416
+ */
+
+const DEFAULT_LOCALE = { code: 'en-US', currency: 'USD' };
+
+function processInput(inputValue) {
+  if (inputValue == null || Number.isNaN(inputValue)) return null;
+  return Number(inputValue);
+}
 
 // ----------------------------------------------------------------------
 
-export function fNumber(number) {
-  return numeral(number).format();
+export function fNumber(inputValue, options) {
+  const locale = DEFAULT_LOCALE;
+
+  const number = processInput(inputValue);
+  if (number === null) return '';
+
+  const fm = new Intl.NumberFormat(locale.code, {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
+    ...options,
+  }).format(number);
+
+  return fm;
 }
 
-export function fCurrency(number) {
-  const format = number ? numeral(number).format('$0,0.00') : '';
+// ----------------------------------------------------------------------
 
-  return result(format, '.00');
+export function fCurrency(inputValue, options) {
+  const locale = DEFAULT_LOCALE;
+
+  const number = processInput(inputValue);
+  if (number === null) return '';
+
+  const fm = new Intl.NumberFormat(locale.code, {
+    style: 'currency',
+    currency: locale.currency,
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
+    ...options,
+  }).format(number);
+
+  return fm;
 }
 
-export function fPercent(number) {
-  const format = number ? numeral(Number(number) / 100).format('0.0%') : '';
+// ----------------------------------------------------------------------
 
-  return result(format, '.0');
+export function fPercent(inputValue, options) {
+  const locale = DEFAULT_LOCALE;
+
+  const number = processInput(inputValue);
+  if (number === null) return '';
+
+  const fm = new Intl.NumberFormat(locale.code, {
+    style: 'percent',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 1,
+    ...options,
+  }).format(number / 100);
+
+  return fm;
 }
 
-export function fShortenNumber(number) {
-  const format = number ? numeral(number).format('0.00a') : '';
+// ----------------------------------------------------------------------
 
-  return result(format, '.00');
-}
+export function fShortenNumber(inputValue, options) {
+  const locale = DEFAULT_LOCALE;
 
-export function fData(number) {
-  const format = number ? numeral(number).format('0.0 b') : '';
+  const number = processInput(inputValue);
+  if (number === null) return '';
 
-  return result(format, '.0');
-}
+  const fm = new Intl.NumberFormat(locale.code, {
+    notation: 'compact',
+    maximumFractionDigits: 2,
+    ...options,
+  }).format(number);
 
-function result(format, key = '.00') {
-  const isInteger = format.includes(key);
-
-  return isInteger ? format.replace(key, '') : format;
+  return fm.replace(/[A-Z]/g, (match) => match.toLowerCase());
 }

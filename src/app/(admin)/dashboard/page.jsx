@@ -4,6 +4,11 @@ import { faker } from '@faker-js/faker';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 
+import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
+import GroupIcon from '@mui/icons-material/Group';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import BugReportIcon from '@mui/icons-material/BugReport';
+
 import Iconify from '@/components/iconify';
 
 import AppTasks from '../../../components/dashboard/overview/app-tasks';
@@ -16,10 +21,44 @@ import AppTrafficBySite from '../../../components/dashboard/overview/app-traffic
 import AppCurrentSubject from '../../../components/dashboard/overview/app-current-subject';
 import AppConversionRates from '../../../components/dashboard/overview/app-conversion-rates';
 import { Grid } from '@mui/material';
+import { useEffect,useState } from 'react';
+import axios from 'axios';
+import { useDashboardContext } from '@/context/DashboardContext';
 
 // ----------------------------------------------------------------------
 
+
+
 export default function AppView() {
+    const [salesData, setSalesData] = useState(null);
+    const [userData, setUserData] = useState(null);
+    const { dashboardLoading,setDashboardLoading } = useDashboardContext();
+  
+    useEffect(() => {
+      setDashboardLoading(true);
+
+      axios
+          .get("/api/admin/dashboard/getSalesdetail")
+          .then((res) => {
+              setSalesData(res.data);
+          })
+          .catch((err) => {
+              console.error("Error fetching sales data:", err);
+          });
+
+      axios
+          .get("/api/admin/dashboard/getUsersdetail")
+          .then((res) => {
+              setUserData(res.data);
+          })
+          .catch((err) => {
+              console.error("Error fetching user data:", err);
+          });
+
+      setDashboardLoading(false);
+  }, [dashboardLoading]);  
+
+
   return (
     <Container maxWidth="xl">
       <Typography variant="h4" sx={{ mb: 5 }}>
@@ -27,43 +66,88 @@ export default function AppView() {
       </Typography>
 
       <Grid container spacing={3}>
-        <Grid xs={12} sm={6} md={3}>
+        <Grid item size={{ xs: 12, sm: 6, md: 3 }}>
           <AppWidgetSummary
             title="Weekly Sales"
-            total={714000}
-            color="success"
-            icon={<img alt="icon" src="/assets/icons/glass/ic_glass_bag.png" />}
+            total={salesData ? salesData.total_sales : 0}
+            percent={salesData ? parseFloat(salesData.percentage_change) : 0}
+            color="warning"
+            icon={<ShoppingCartIcon sx={{ width: 32, height: 32 }} />}
+            chart={{
+              categories: [
+                "Jan",
+                "Feb",
+                "Mar",
+                "Apr",
+                "May",
+                "Jun",
+                "Jul",
+                "Aug",
+                "Sep",
+                "Oct",
+                "Nov",
+                "Dec",
+              ],
+              series: salesData ? salesData.monthsWithData : [],
+            }}
           />
         </Grid>
 
-        <Grid xs={12} sm={6} md={3}>
-          <AppWidgetSummary
+        <Grid item size={{ xs: 12, sm: 6, md: 3 }}>
+        <AppWidgetSummary
             title="New Users"
-            total={1352831}
+            total={userData ? userData.total_users : 0}
+            percent={userData ? userData.user_percentage_change : 0}
             color="info"
-            icon={<img alt="icon" src="/assets/icons/glass/ic_glass_users.png" />}
+            icon={<ShoppingCartIcon sx={{ width: 32, height: 32 }} />}
+            chart={{
+              categories: [
+                "Jan",
+                "Feb",
+                "Mar",
+                "Apr",
+                "May",
+                "Jun",
+                "Jul",
+                "Aug",
+                "Oct",
+                "Nov",
+                "Dec"
+              ],
+              series: userData ? userData.monthly_users : [],
+            }}
           />
         </Grid>
 
-        <Grid xs={12} sm={6} md={3}>
+        <Grid item size={{ xs: 12, sm: 6, md: 3 }}>
           <AppWidgetSummary
             title="Item Orders"
             total={1723315}
+            percent={2.6}
             color="warning"
-            icon={<img alt="icon" src="/assets/icons/glass/ic_glass_buy.png" />}
+            icon={<ShoppingCartIcon sx={{ width: 32, height: 32 }} />}
+            chart={{
+              categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
+              series: [22, 8, 35, 50, 82, 84, 77, 12],
+            }}
           />
         </Grid>
 
-        <Grid xs={12} sm={6} md={3}>
+        <Grid item size={{ xs: 12, sm: 6, md: 3 }}>
           <AppWidgetSummary
             title="Bug Reports"
             total={234}
             color="error"
-            icon={<img alt="icon" src="/assets/icons/glass/ic_glass_message.png" />}
+            percent={2.6}
+            icon={<BugReportIcon sx={{ width: 32, height: 32 }} />}
+            chart={{
+              categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
+              series: [22, 8, 35, 50, 82, 84, 77, 12],
+            }}
           />
         </Grid>
 
-        <Grid xs={12} md={6} lg={8}>
+        <Grid item size={{ xs: 12, md: 6, lg: 8 }}>
           <AppWebsiteVisits
             title="Website Visits"
             subheader="(+43%) than last year"
@@ -105,7 +189,7 @@ export default function AppView() {
           />
         </Grid>
 
-        <Grid xs={12} md={6} lg={4}>
+        <Grid item size={{ xs: 12, md: 6, lg: 4 }}>
           <AppCurrentVisits
             title="Current Visits"
             chart={{
@@ -119,7 +203,7 @@ export default function AppView() {
           />
         </Grid>
 
-        <Grid xs={12} md={6} lg={8}>
+        <Grid item size={{ xs: 12, md: 6, lg: 8 }}>
           <AppConversionRates
             title="Conversion Rates"
             subheader="(+43%) than last year"
@@ -140,7 +224,7 @@ export default function AppView() {
           />
         </Grid>
 
-        <Grid xs={12} md={6} lg={4}>
+        <Grid item size={{ xs: 12, md: 6, lg: 4 }}>
           <AppCurrentSubject
             title="Current Subject"
             chart={{
@@ -154,7 +238,7 @@ export default function AppView() {
           />
         </Grid>
 
-        <Grid xs={12} md={6} lg={8}>
+        {/* <Grid xs={12} md={6} lg={8}>
           <AppNewsUpdate
             title="News Update"
             list={[...Array(5)].map((_, index) => ({
@@ -165,9 +249,9 @@ export default function AppView() {
               postedAt: faker.date.recent(),
             }))}
           />
-        </Grid>
+        </Grid> */}
 
-        <Grid xs={12} md={6} lg={4}>
+        <Grid item size={{ xs: 12, md: 6, lg: 4 }}>
           <AppOrderTimeline
             title="Order Timeline"
             list={[...Array(5)].map((_, index) => ({
@@ -185,7 +269,7 @@ export default function AppView() {
           />
         </Grid>
 
-        <Grid xs={12} md={6} lg={4}>
+        <Grid item size={{ xs: 12, md: 6, lg: 4 }}>
           <AppTrafficBySite
             title="Traffic by Site"
             list={[
@@ -213,7 +297,7 @@ export default function AppView() {
           />
         </Grid>
 
-        <Grid xs={12} md={6} lg={8}>
+        <Grid item size={{ xs: 12, md: 6, lg: 4 }}>
           <AppTasks
             title="Tasks"
             list={[
