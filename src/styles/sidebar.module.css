@@ -51,3 +51,10 @@
   overflow-y: auto;
   background-color: #f8fafc;
 }
+
+.centerLoader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}

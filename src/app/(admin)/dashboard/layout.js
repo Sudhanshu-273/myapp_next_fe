@@ -13,13 +13,19 @@ function LayoutContent({ children }) {
     <div className={styles.dashboardContainer}>
       <Nav />
       <main className={styles.mainContent}>
-        {dashboardLoading && (
-          <LinearProgress
-            color="primary"
-            sx={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 1200 }}
-          />
+        {dashboardLoading ? (
+          <div className={styles.centerLoader}>
+            <LinearProgress
+              color="primary"
+              variant="buffer"
+              value={60}
+              valueBuffer={80}
+              sx={{ width: '50%' }}
+            />
+          </div>
+        ) : (
+          children
         )}
-        {!dashboardLoading && children}
       </main>
     </div>
   );
