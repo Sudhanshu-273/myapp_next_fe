@@ -25,40 +25,13 @@ import { useEffect,useState } from 'react';
 import axios from 'axios';
 import { useDashboardContext } from '@/context/DashboardContext';
 
-// ----------------------------------------------------------------------
+
 
 
 
 export default function AppView() {
-    const [salesData, setSalesData] = useState(null);
-    const [userData, setUserData] = useState(null);
-    const { dashboardLoading,setDashboardLoading } = useDashboardContext();
+  const { dashboardLoading, salesData, userData } = useDashboardContext();
   
-    useEffect(() => {
-      setDashboardLoading(true);
-
-      axios
-          .get("/api/admin/dashboard/getSalesdetail")
-          .then((res) => {
-              setSalesData(res.data);
-          })
-          .catch((err) => {
-              console.error("Error fetching sales data:", err);
-          });
-
-      axios
-          .get("/api/admin/dashboard/getUsersdetail")
-          .then((res) => {
-              setUserData(res.data);
-          })
-          .catch((err) => {
-              console.error("Error fetching user data:", err);
-          });
-
-      setDashboardLoading(false);
-  }, [dashboardLoading]);  
-
-
   return (
     <Container maxWidth="xl">
       <Typography variant="h4" sx={{ mb: 5 }}>

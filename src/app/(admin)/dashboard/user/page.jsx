@@ -35,6 +35,7 @@ import Scrollbar from "@/components/Scrollbar";
 import toast from "react-hot-toast";
 import TableNoData from "./components/table-no-data";
 import TableEmptyRows from "./components/table-empty-rows";
+import { useDashboardContext } from "@/context/DashboardContext";
 
 export default function Page() {
   const [page, setPage] = useState(0);
@@ -46,41 +47,12 @@ export default function Page() {
 
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
-
+  const { userList } = useDashboardContext();
   useEffect(() => {
-    axios
-      .get("/api/user/list")
-      .then((res) => {
-        const formatted = res.data.data.map((user) => ({
-          id: user.id,
-          name: user.name || "-",
-          email: user.email,
-          phone: user.phone || "-",
-          role: convertAccountType(user.account_type),
-          isVerified: !!user.verified,
-          status: user.account_status || "inactive",
-        }));
-        setUsers(formatted);
-      })
-      .catch((err) => {
-        console.error("Error fetching users:", err);
-      });
-  }, []);
+    setUsers(userList);
+  }, [userList]);
 
-  const convertAccountType = (type) => {
-    switch (type) {
-      case 1:
-        return "admin";
-      case 2:
-        return "trainer";
-      case 3:
-        return "member";
-      case 4:
-        return "customer";
-      default:
-        return "unknown";
-    }
-  };
+  
 
   const handleChangePage = (event, newPage) => setPage(newPage);
   const handleChangeRowsPerPage = (event) => {
