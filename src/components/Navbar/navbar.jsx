@@ -1,5 +1,4 @@
 "use client";
-
 import * as React from "react";
 import {
   AppBar,
@@ -30,6 +29,7 @@ function Navbar() {
     { label: "Purchases", path: "/purchase" },
     { label: "Blog", path: "/blog" },
     { label: "Subscription", path: "/subscription" },
+    {label: "Products", path: "/products"}
   ];
 
   const settings = [
